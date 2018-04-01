@@ -4,13 +4,13 @@
 
 #include <uapi/linux/stddef.h>
 
-#undef NULL
-#define NULL ((void *)0)
+/*
+ * The type of the NULL pointer.  This is a special C++ pointer type.
+ */
+typedef decltype(nullptr) nullptr_t;
 
-enum {
-	false	= 0,
-	true	= 1
-};
+#undef NULL
+#define NULL nullptr
 
 #undef offsetof
 #define offsetof(TYPE, MEMBER)	__builtin_offsetof(TYPE, MEMBER)
