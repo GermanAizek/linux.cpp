@@ -30,7 +30,7 @@ static inline projid_t __kprojid_val(kprojid_t projid)
 
 #define KPROJIDT_INIT(value) (kprojid_t){ value }
 
-#define INVALID_PROJID KPROJIDT_INIT(-1)
+#define INVALID_PROJID KPROJIDT_INIT(UINT_MAX)
 #define OVERFLOW_PROJID 65534
 
 static inline bool projid_eq(kprojid_t left, kprojid_t right)
