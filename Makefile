@@ -545,12 +545,15 @@ LINUXINCLUDE    := \
 KBUILD_AFLAGS   := -D__ASSEMBLY__ -fno-PIE
 
 KBUILD_CFLAGS :=
-KBUILD_CFLAGS += -std=c++17
+KBUILD_CFLAGS += -std=gnu89
 KBUILD_CFLAGS += -fshort-wchar
 KBUILD_CFLAGS += -funsigned-char
 KBUILD_CFLAGS += -fno-common
 KBUILD_CFLAGS += -fno-PIE
 KBUILD_CFLAGS += -fno-strict-aliasing
+KBUILD_CFLAGS += -fno-rtti
+KBUILD_CFLAGS += -fno-exceptions
+KBUILD_CFLAGS += -fpermissive
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_RUSTFLAGS := $(rust_common_flags) \
