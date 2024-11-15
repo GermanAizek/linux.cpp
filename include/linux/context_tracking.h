@@ -54,7 +54,7 @@ static inline enum ctx_state exception_enter(void)
 
 	if (IS_ENABLED(CONFIG_HAVE_CONTEXT_TRACKING_USER_OFFSTACK) ||
 	    !context_tracking_enabled())
-		return 0;
+		return CONTEXT_KERNEL;
 
 	prev_ctx = __ct_state();
 	if (prev_ctx != CT_STATE_KERNEL)
@@ -95,7 +95,7 @@ static inline void user_enter(void) { }
 static inline void user_exit(void) { }
 static inline void user_enter_irqoff(void) { }
 static inline void user_exit_irqoff(void) { }
-static inline int exception_enter(void) { return 0; }
+static inline int exception_enter(void) { return CONTEXT_KERNEL; }
 static inline void exception_exit(enum ctx_state prev_ctx) { }
 static inline int ct_state(void) { return -1; }
 static inline int __ct_state(void) { return -1; }
