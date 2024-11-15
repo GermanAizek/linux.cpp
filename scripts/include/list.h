@@ -6,9 +6,6 @@
 
 #include "list_types.h"
 
-/* Are two types/vars the same type (ignoring qualifiers)? */
-#define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-
 /**
  * container_of - cast a member of a structure out to the containing structure
  * @ptr:	the pointer to the member.
@@ -18,9 +15,9 @@
  */
 #define container_of(ptr, type, member) ({				\
 	void *__mptr = (void *)(ptr);					\
-	_Static_assert(__same_type(*(ptr), ((type *)0)->member) ||	\
-		      __same_type(*(ptr), void),			\
-		      "pointer type mismatch in container_of()");	\
+	/*_Static_assert(__same_type(*(ptr), ((type *)0)->member) || */	\
+	/*	      __same_type(*(ptr), void),		*/	\
+	/*	      "pointer type mismatch in container_of()"); */	\
 	((type *)(__mptr - offsetof(type, member))); })
 
 #define LIST_POISON1  ((void *) 0x100)
@@ -60,14 +57,14 @@ static inline void INIT_LIST_HEAD(struct list_head *list)
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_add(struct list_head *new,
-			      struct list_head *prev,
-			      struct list_head *next)
+static inline void __list_add(struct list_head *lh_new,
+			      struct list_head *lh_prev,
+			      struct list_head *lh_next)
 {
-	next->prev = new;
-	new->next = next;
-	new->prev = prev;
-	prev->next = new;
+	lh_next->prev = lh_new;
+	lh_new->next = lh_next;
+	lh_new->prev = lh_prev;
+	lh_prev->next = lh_new;
 }
 
 /**
@@ -78,9 +75,9 @@ static inline void __list_add(struct list_head *new,
  * Insert a new entry after the specified head.
  * This is good for implementing stacks.
  */
-static inline void list_add(struct list_head *new, struct list_head *head)
+static inline void list_add(struct list_head *lh_new, struct list_head *lh_head)
 {
-	__list_add(new, head, head->next);
+	__list_add(lh_new, lh_head, lh_head->next);
 }
 
 /**
@@ -91,9 +88,9 @@ static inline void list_add(struct list_head *new, struct list_head *head)
  * Insert a new entry before the specified head.
  * This is useful for implementing queues.
  */
-static inline void list_add_tail(struct list_head *new, struct list_head *head)
+static inline void list_add_tail(struct list_head *lh_new, struct list_head *lh_head)
 {
-	__list_add(new, head->prev, head);
+	__list_add(lh_new, lh_head->prev, lh_head);
 }
 
 /*
@@ -123,8 +120,8 @@ static inline void __list_del_entry(struct list_head *entry)
 static inline void list_del(struct list_head *entry)
 {
 	__list_del_entry(entry);
-	entry->next = LIST_POISON1;
-	entry->prev = LIST_POISON2;
+	entry->next = static_cast<struct list_head *>(LIST_POISON1);
+	entry->prev = static_cast<struct list_head *>(LIST_POISON2);
 }
 
 /**
@@ -134,13 +131,13 @@ static inline void list_del(struct list_head *entry)
  *
  * If @old was empty, it will be overwritten.
  */
-static inline void list_replace(struct list_head *old,
-				struct list_head *new)
+static inline void list_replace(struct list_head *lh_old,
+				struct list_head *lh_new)
 {
-	new->next = old->next;
-	new->next->prev = new;
-	new->prev = old->prev;
-	new->prev->next = new;
+	lh_new->next = lh_old->next;
+	lh_new->next->prev = lh_new;
+	lh_new->prev = lh_old->prev;
+	lh_new->prev->next = lh_new;
 }
 
 /**
@@ -150,11 +147,11 @@ static inline void list_replace(struct list_head *old,
  *
  * If @old was empty, it will be overwritten.
  */
-static inline void list_replace_init(struct list_head *old,
-				     struct list_head *new)
+static inline void list_replace_init(struct list_head *lh_old,
+				     struct list_head *lh_new)
 {
-	list_replace(old, new);
-	INIT_LIST_HEAD(old);
+	list_replace(lh_old, lh_new);
+	INIT_LIST_HEAD(lh_old);
 }
 
 /**

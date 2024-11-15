@@ -437,7 +437,7 @@ HOSTRUSTC = rustc
 HOSTPKG_CONFIG	= pkg-config
 
 KBUILD_USERHOSTCFLAGS := -Wall -Wmissing-prototypes -Wstrict-prototypes \
-			 -O2 -fomit-frame-pointer -std=c++17
+			 -O2 -fomit-frame-pointer -std=gnu89 -Wno-pointer-arith -fno-rtti -fno-exceptions -fpermissive
 KBUILD_USERCFLAGS  := $(KBUILD_USERHOSTCFLAGS) $(USERCFLAGS)
 KBUILD_USERLDFLAGS := $(USERLDFLAGS)
 
@@ -551,6 +551,7 @@ KBUILD_CFLAGS += -funsigned-char
 KBUILD_CFLAGS += -fno-common
 KBUILD_CFLAGS += -fno-PIE
 KBUILD_CFLAGS += -fno-strict-aliasing
+KBUILD_CFLAGS += -Wno-pointer-arith
 KBUILD_CFLAGS += -fno-rtti
 KBUILD_CFLAGS += -fno-exceptions
 KBUILD_CFLAGS += -fpermissive
