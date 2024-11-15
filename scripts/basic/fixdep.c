@@ -135,7 +135,7 @@ static void add_to_hashtable(const char *name, int len, unsigned int hash,
 {
 	struct item *aux;
 
-	aux = xmalloc(sizeof(*aux) + len);
+	aux = (struct item *)xmalloc(sizeof(*aux) + len);
 	memcpy(aux->name, name, len);
 	aux->len = len;
 	aux->hash = hash;
@@ -227,7 +227,7 @@ static void *read_file(const char *filename)
 		perror(filename);
 		exit(2);
 	}
-	buf = xmalloc(st.st_size + 1);
+	buf = (char *)xmalloc(st.st_size + 1);
 	if (read(fd, buf, st.st_size) != st.st_size) {
 		perror("fixdep: read");
 		exit(2);
@@ -389,7 +389,7 @@ static void parse_dep_file(char *p, const char *target)
 			void *buf;
 
 			buf = read_file(p);
-			parse_config_file(buf);
+			parse_config_file((const char *)buf);
 			free(buf);
 		}
 
@@ -422,7 +422,7 @@ int main(int argc, char *argv[])
 	printf("savedcmd_%s := %s\n\n", target, cmdline);
 
 	buf = read_file(depfile);
-	parse_dep_file(buf, target);
+	parse_dep_file((char *)buf, target);
 	free(buf);
 
 	fflush(stdout);
