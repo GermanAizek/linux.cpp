@@ -11,7 +11,7 @@
 
 #define HASHTABLE_DEFINE(name, size)						\
 	HASHTABLE_DECLARE(name, size) =						\
-			{ [0 ... ((size) - 1)] = HLIST_HEAD_INIT }
+			{ HLIST_HEAD_INIT }
 
 #define hash_head(table, key)		(&(table)[(key) % HASH_SIZE(table)])
 
