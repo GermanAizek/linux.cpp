@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+/* SPDX-License-Identifier: GPL-2.0 -*- c++ -*- */
 /*
  * NOTE:
  *
@@ -19,6 +19,7 @@
 #include <linux/stddef.h>
 #include <linux/types.h>
 #include <linux/compiler.h>
+#include <linux/compiler-c++.h>
 #include <linux/container_of.h>
 #include <linux/bitops.h>
 #include <linux/hex.h>
