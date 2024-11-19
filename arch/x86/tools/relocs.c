@@ -95,24 +95,22 @@ static const char * const	sym_regex_kernel[S_NSYMTYPES] = {
 
 
 static const char * const sym_regex_realmode[S_NSYMTYPES] = {
+	NULL,
 /*
  * These symbols are known to be relative, even if the linker marks them
  * as absolute (typically defined outside any section in the linker script.)
  */
-	[S_REL] =
 	"^pa_",
 
 /*
  * These are 16-bit segment symbols when compiling 16-bit code.
  */
-	[S_SEG] =
 	"^real_mode_seg$",
 
 /*
  * These are offsets belonging to segments, as opposed to linear addresses,
  * when compiling 16-bit code.
  */
-	[S_LIN] =
 	"^pa_",
 };
 
@@ -208,8 +206,8 @@ static const char *sym_visibility(unsigned visibility)
 static const char *rel_type(unsigned type)
 {
 	static const char *type_name[] = {
-#define REL_TYPE(X) [X] = #X
-#if ELF_BITS == 64
+#define REL_TYPE(X) #X
+#if ELF_BITS == 64 // TODO: edit init array indexes rel_types as i386
 		REL_TYPE(R_X86_64_NONE),
 		REL_TYPE(R_X86_64_64),
 		REL_TYPE(R_X86_64_PC64),
@@ -228,21 +226,30 @@ static const char *rel_type(unsigned type)
 		REL_TYPE(R_X86_64_8),
 		REL_TYPE(R_X86_64_PC8),
 #else
-		REL_TYPE(R_386_NONE),
-		REL_TYPE(R_386_32),
-		REL_TYPE(R_386_PC32),
-		REL_TYPE(R_386_GOT32),
-		REL_TYPE(R_386_PLT32),
-		REL_TYPE(R_386_COPY),
-		REL_TYPE(R_386_GLOB_DAT),
-		REL_TYPE(R_386_JMP_SLOT),
-		REL_TYPE(R_386_RELATIVE),
-		REL_TYPE(R_386_GOTOFF),
-		REL_TYPE(R_386_GOTPC),
-		REL_TYPE(R_386_8),
-		REL_TYPE(R_386_PC8),
-		REL_TYPE(R_386_16),
-		REL_TYPE(R_386_PC16),
+		REL_TYPE(R_386_NONE), // 0
+		REL_TYPE(R_386_32), // 1
+		REL_TYPE(R_386_PC32), // 2
+		REL_TYPE(R_386_GOT32), // 3
+		REL_TYPE(R_386_PLT32), // 4
+		REL_TYPE(R_386_COPY), // 5
+		REL_TYPE(R_386_GLOB_DAT), // 6
+		REL_TYPE(R_386_JMP_SLOT), // 7
+		REL_TYPE(R_386_RELATIVE), // 8
+		REL_TYPE(R_386_GOTOFF),// 9
+		REL_TYPE(R_386_GOTPC), // 10
+		NULL, // 11
+		NULL, // 12
+		NULL, // 13
+		NULL, // 14
+		NULL, // 15
+		NULL, // 16
+		NULL, // 17
+		NULL, // 18
+		NULL, // 19
+		REL_TYPE(R_386_16), // 20
+		REL_TYPE(R_386_PC16), // 21
+		REL_TYPE(R_386_8), // 22
+		REL_TYPE(R_386_PC8), // 23
 #endif
 #undef REL_TYPE
 	};
@@ -582,9 +589,9 @@ static void print_absolute_symbols(void)
 	const char *format;
 
 	if (ELF_BITS == 64)
-		format = "%5d %016"PRIx64" %5"PRId64" %10s %10s %12s %s\n";
+		format = "%5d %016" PRIx64 " %5" PRId64 " %10s %10s %12s %s\n";
 	else
-		format = "%5d %08"PRIx32"  %5"PRId32" %10s %10s %12s %s\n";
+		format = "%5d %08" PRIx32 "  %5" PRId32 " %10s %10s %12s %s\n";
 
 	printf("Absolute symbols\n");
 	printf(" Num:    Value Size  Type       Bind        Visibility  Name\n");
@@ -626,9 +633,9 @@ static void print_absolute_relocs(void)
 	const char *format;
 
 	if (ELF_BITS == 64)
-		format = "%016"PRIx64" %016"PRIx64" %10s %016"PRIx64"  %s\n";
+		format = "%016" PRIx64 " %016" PRIx64 " %10s %016" PRIx64 "  %s\n";
 	else
-		format = "%08"PRIx32" %08"PRIx32" %10s %08"PRIx32"  %s\n";
+		format = "%08" PRIx32 " %08" PRIx32 " %10s %08" PRIx32 "  %s\n";
 
 	for (i = 0; i < shnum; i++) {
 		struct section *sec = &secs[i];
@@ -1063,7 +1070,7 @@ static int write32(uint32_t v, FILE *f)
 
 static int write32_as_text(uint32_t v, FILE *f)
 {
-	return fprintf(f, "\t.long 0x%08"PRIx32"\n", v) > 0 ? 0 : -1;
+	return fprintf(f, "\t.long 0x%08" PRIx32 "\n", v) > 0 ? 0 : -1;
 }
 
 static void emit_relocs(int as_text, int use_real_mode)
